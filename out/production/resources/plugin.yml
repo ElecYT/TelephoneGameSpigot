@@ -1,0 +1,9 @@
+name: TelephoneGameSpigot
+version: '1.0-SNAPSHOT'
+main: me.elec.telephoneGameSpigot.TelephoneGameSpigot
+api-version: '1.21'
+depend: [ voicechat ]
+commands:
+  call:
+    description: Call another user.
+    usage: call [player]

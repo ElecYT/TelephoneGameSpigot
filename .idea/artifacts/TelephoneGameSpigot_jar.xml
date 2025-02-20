@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="TelephoneGameSpigot:jar">
+    <output-path>$USER_HOME$/Downloads</output-path>
+    <root id="archive" name="TelephoneGameSpigot.jar">
+      <element id="module-output" name="TelephoneGameSpigot.main" />
+      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/de.maxhenkel.voicechat/voicechat-api/2.5.27/7cf92f376aac879e1ccb16d43391c3a6db683402/voicechat-api-2.5.27.jar" path-in-jar="/" />
+      <element id="dir-copy" path="$PROJECT_DIR$/src/main/resources" />
+    </root>
+  </artifact>
+</component>
