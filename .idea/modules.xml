@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/TelephoneGameSpigot.main.iml" filepath="$PROJECT_DIR$/.idea/modules/TelephoneGameSpigot.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/me.elec.TelephoneGameSpigot.main.iml" filepath="$PROJECT_DIR$/.idea/modules/me.elec.TelephoneGameSpigot.main.iml" />
     </modules>
   </component>
 </project>
