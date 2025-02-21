@@ -33,8 +33,9 @@ public class BribeManager {
         if (newBalance >= 0) {
             setMoneyMap(newBalance, sender);
             reciever.sendMessage(ChatColor.GREEN + "You recieved " + amount + " from " + sender.getName() + "!");
+            sender.sendMessage(ChatColor.GREEN + "You sent " + amount + " to " + reciever.getName() +"!");
         } else {
-
+            sender.sendMessage(ChatColor.RED + "You do not have enough money! Your balance: " + getMoneyMap().get(sender));
         }
     }
 }
