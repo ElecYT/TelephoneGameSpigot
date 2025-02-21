@@ -21,6 +21,7 @@ public final class TelephoneGameSpigot extends JavaPlugin {
         // Delay lookup slightly if necessary (optional)
         Bukkit.getScheduler().runTaskLater(this, () -> {
             BukkitVoicechatService service = getServer().getServicesManager().load(BukkitVoicechatService.class);
+            Bukkit.getLogger().info(String.valueOf(service));
             if (service != null) {
                 service.registerPlugin(new VoiceChatManager(this));
                 getLogger().info("Simple Voice Chat API hooked in!");
