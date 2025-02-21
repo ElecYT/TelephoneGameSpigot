@@ -1,14 +1,15 @@
 package me.elec.telephoneGameSpigot;
 
-import de.maxhenkel.voicechat.api.*;
+import de.maxhenkel.voicechat.api.Group;
+import de.maxhenkel.voicechat.api.VoicechatApi;
+import de.maxhenkel.voicechat.api.VoicechatPlugin;
+import de.maxhenkel.voicechat.api.VoicechatServerApi;
+import de.maxhenkel.voicechat.api.VoicechatConnection;
 import de.maxhenkel.voicechat.api.events.EventRegistration;
-import de.maxhenkel.voicechat.api.events.ClientVoicechatConnectionEvent;
-import de.maxhenkel.voicechat.api.events.MicrophonePacketEvent;
+import de.maxhenkel.voicechat.api.events.PlayerConnectedEvent;
+import de.maxhenkel.voicechat.api.events.VoicechatServerStartedEvent;
 import org.bukkit.entity.Player;
 
-import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 public class VoiceChatManager implements VoicechatPlugin {
@@ -17,9 +18,6 @@ public class VoiceChatManager implements VoicechatPlugin {
     private VoicechatApi voicechatApi;
     private VoicechatServerApi voiceChatServerApi;
 
-    // Maintain a map of player UUIDs to their voice chat connections.
-    private final Map<UUID, VoicechatConnection> connectionMap = new HashMap<>();
-
     public VoiceChatManager(TelephoneGameSpigot plugin) {
         this.plugin = plugin;
     }
@@ -27,15 +25,14 @@ public class VoiceChatManager implements VoicechatPlugin {
     @Override
     public void initialize(VoicechatApi api) {
         this.voicechatApi = api;
-        plugin.getLogger().info("Voicechat API has been initialized.");
+        plugin.getLogger().info("Voicechat API initialized in VoiceChatManager.");
     }
 
     @Override
     public void registerEvents(EventRegistration registration) {
-        // Register the ClientVoicechatConnectionEvent listener.
-        registration.registerEvent(MicrophonePacketEvent.class, event -> {
-            //Set voiceChatServerApi variable
-            voiceChatServerApi = event.getVoicechat();
+        registration.registerEvent(PlayerConnectedEvent.class, event -> {
+            this.voiceChatServerApi = event.getVoicechat();
+            plugin.getLogger().info("VoicechatServerApi obtained from VoicechatServerStartedEvent: " + voiceChatServerApi);
         });
     }
 
@@ -44,28 +41,33 @@ public class VoiceChatManager implements VoicechatPlugin {
         return "telephonegame";
     }
 
-    // Creates a voice group for two players using the stored connections.
     public void createVoiceGroup(Player player1, Player player2) {
+        if (voiceChatServerApi == null) {
+            plugin.getLogger().warning("VoiceChatServerApi is null, cannot create group.");
+            return;
+        }
 
-        // Create a unique group name.
         String groupName = "Call-" + UUID.randomUUID().toString().substring(0, 6);
-
         Group group = voiceChatServerApi.createGroup(groupName, null);
-        VoicechatConnection playerOneConnection = voiceChatServerApi.getConnectionOf(player1.getUniqueId());
-
-        if (playerOneConnection == null) {
-            return; // Player does not exist
+        if (group == null) {
+            plugin.getLogger().warning("Failed to create voice chat group.");
+            return;
         }
 
-        playerOneConnection.setGroup(group);
-
-        VoicechatConnection playerTwoConnection = voiceChatServerApi.getConnectionOf(player1.getUniqueId());
-
-        if (playerTwoConnection == null) {
-            return; // Player does not exist
+        VoicechatConnection connection1 = voiceChatServerApi.getConnectionOf(player1.getUniqueId());
+        if (connection1 == null) {
+            player1.sendMessage("§cYou are not connected to voice chat.");
+            return;
         }
 
-        playerTwoConnection.setGroup(group);
+        VoicechatConnection connection2 = voiceChatServerApi.getConnectionOf(player2.getUniqueId());
+        if (connection2 == null) {
+            player2.sendMessage("§cYou are not connected to voice chat.");
+            return;
+        }
+
+        connection1.setGroup(group);
+        connection2.setGroup(group);
 
         player1.sendMessage("§aYou have been added to a voice chat group with " + player2.getName() + "!");
         player2.sendMessage("§aYou have been added to a voice chat group with " + player1.getName() + "!");

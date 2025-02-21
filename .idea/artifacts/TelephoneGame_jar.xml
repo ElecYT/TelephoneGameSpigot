@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="TelephoneGame:jar">
+    <output-path>$USER_HOME$/AppData/Roaming/.feather/player-server/servers/9ba21143-9020-4878-85cd-5ccdc0d54427/plugins</output-path>
+    <root id="archive" name="TelephoneGame.jar">
+      <element id="module-output" name="TelephoneGameSpigot.main" />
+      <element id="dir-copy" path="$PROJECT_DIR$/src/main/resources" />
+    </root>
+  </artifact>
+</component>
