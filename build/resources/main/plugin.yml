@@ -7,9 +7,3 @@ commands:
   call:
     description: Call another user.
     usage: call [player]
-  bribe:
-    description: Used to bribe another user.
-    usage: bribe [player]
-  startgame:
-    description: Starts the telephone game.
-    usage: startgame

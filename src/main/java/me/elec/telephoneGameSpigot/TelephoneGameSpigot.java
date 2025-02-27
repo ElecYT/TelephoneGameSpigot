@@ -19,14 +19,17 @@ public final class TelephoneGameSpigot extends JavaPlugin {
     private VoiceChatManager voiceChatManager;
 
     private BribeManager bribeManager;
+    private TeleportManager teleportManager;
 
 
 
     @Override
     public void onEnable() {
         plugin = this;
-        voiceChatManager = new VoiceChatManager(plugin);
+        teleportManager = new TeleportManager();
+        voiceChatManager = new VoiceChatManager(plugin, teleportManager);
         bribeManager = new BribeManager();
+
 
 
         // Log the "voicechat" plugin instance from the plugin manager.
@@ -77,8 +80,11 @@ public final class TelephoneGameSpigot extends JavaPlugin {
         // Register the command executor using the shared instance.
         // Note: This instance might be null until the service is found.
         getCommand("call").setExecutor(new CallCommand(this, voiceChatManager));
-        getCommand("bribe").setExecutor(new BribeCommand(plugin, bribeManager));
-        getCommand("startgame").setExecutor(new StartGameCommand(bribeManager));
+        getCommand("bribe").setExecutor(new BribeCommand(this, bribeManager));
+        getCommand("startgame").setExecutor(new StartGameCommand(bribeManager, this));
+
+        //Populate Location Map
+        teleportManager.populateLocationMap();
     }
 
     @Override

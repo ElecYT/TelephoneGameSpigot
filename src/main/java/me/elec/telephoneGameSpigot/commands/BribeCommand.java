@@ -26,6 +26,7 @@ public class BribeCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+
         if (!(sender instanceof Player)) {
             sender.sendMessage(ChatColor.RED + "Only players can use this command.");
             return true;
@@ -33,22 +34,30 @@ public class BribeCommand implements CommandExecutor {
 
         Player player = (Player) sender;
 
+        // Expecting exactly two arguments: amount and target name
         if (args.length != 2) {
-            player.sendMessage(ChatColor.RED + "Usage: /bribe [amount] <player>)");
+            player.sendMessage(ChatColor.RED + "Usage: /bribe <amount> <player>");
             return true;
         }
 
-        int amount = Integer.valueOf(args[1]);
+        int amount;
+        try {
+            amount = Integer.parseInt(args[0]);
+        } catch (NumberFormatException e) {
+            player.sendMessage(ChatColor.RED + "Invalid amount: " + args[0]);
+            return true;
+        }
+
         String target = args[1];
         Player targetPlayer = Bukkit.getPlayer(target);
 
-        if (targetPlayer == null || !player.isOnline()) {
-            player.sendMessage(ChatColor.RED + "Invalid Player.");
+        if (targetPlayer == null || !targetPlayer.isOnline()) {
+            player.sendMessage(ChatColor.RED + "Invalid player: " + target);
+            return true;
         } else {
             bribeManager.processPayment(player, targetPlayer, amount);
             return true;
         }
-
-        return true;
     }
+
 }

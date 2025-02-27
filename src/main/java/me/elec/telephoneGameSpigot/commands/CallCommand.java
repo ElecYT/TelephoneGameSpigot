@@ -1,5 +1,7 @@
 package me.elec.telephoneGameSpigot.commands;
 
+import de.maxhenkel.voicechat.api.VoicechatConnection;
+import de.maxhenkel.voicechat.api.VoicechatServerApi;
 import me.elec.telephoneGameSpigot.TelephoneGameSpigot;
 import me.elec.telephoneGameSpigot.VoiceChatManager;
 import org.bukkit.Bukkit;
@@ -15,6 +17,8 @@ import java.util.UUID;
 public class CallCommand implements CommandExecutor {
 
     private final HashMap<UUID, UUID> callRequests = new HashMap<>();
+
+
     private final VoiceChatManager voiceChatManager;
     private final TelephoneGameSpigot plugin;
 
@@ -33,14 +37,14 @@ public class CallCommand implements CommandExecutor {
         Player player = (Player) sender;
 
         if (args.length != 1) {
-            player.sendMessage(ChatColor.RED + "Usage: /call <player> OR /call accept OR /call deny");
+            player.sendMessage(ChatColor.RED + "Usage: /call <player> OR /call accept OR /call deny OR /call end");
             return true;
         }
 
         String action = args[0].toLowerCase();
 
         // Sending a call request
-        if (!action.equals("accept") && !action.equals("deny")) {
+        if (!action.equals("accept") && !action.equals("deny") && !action.equals("end")) {
             Player target = Bukkit.getPlayer(action);
 
             if (target == null || !target.isOnline()) {
@@ -81,6 +85,7 @@ public class CallCommand implements CommandExecutor {
 
             // Add both players to a voice chat group
             voiceChatManager.createVoiceGroup(caller, player);
+            voiceChatManager.addCallPairing(player.getUniqueId(), caller.getUniqueId());
 
             callRequests.remove(player.getUniqueId());
             return true;
@@ -101,6 +106,40 @@ public class CallCommand implements CommandExecutor {
             }
 
             callRequests.remove(player.getUniqueId());
+            return true;
+        }
+
+        if (action.equals("end")) {
+            UUID partnerUUID = voiceChatManager.getCallPartner(player.getUniqueId());
+            if (partnerUUID == null) {
+                player.sendMessage("You are not in a call.");
+                return true;
+            }
+            VoicechatServerApi serverApi = voiceChatManager.getVoiceChatServerApi();
+            if (serverApi == null) {
+                player.sendMessage("Voice chat server API is not available.");
+                return true;
+            }
+
+            // Get the voice chat connection for both players.
+            VoicechatConnection connection1 = serverApi.getConnectionOf(player.getUniqueId());
+            VoicechatConnection connection2 = serverApi.getConnectionOf(partnerUUID);
+
+            if (connection1 != null) {
+                connection1.setGroup(null);
+                player.sendMessage("Call ended.");
+            } else {
+                player.sendMessage("Could not end your call because you are not connected to voice chat.");
+            }
+            Player partner = Bukkit.getPlayer(partnerUUID);
+            if (partner != null && connection2 != null) {
+                connection2.setGroup(null);
+                partner.sendMessage("Call ended.");
+            }
+
+            // Remove the pairing from your manager.
+            voiceChatManager.removeCallPairing(player.getUniqueId());
+
             return true;
         }
 

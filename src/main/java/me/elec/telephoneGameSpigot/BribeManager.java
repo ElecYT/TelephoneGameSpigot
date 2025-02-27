@@ -22,20 +22,25 @@ public class BribeManager {
 
     }
 
-    public void setupMap() {
+    public void populateMap() {
         for (Player player : Bukkit.getOnlinePlayers()) {
             moneyMap.put(player, 100);
         }
     }
 
-    public void processPayment(Player sender, Player reciever, int amount) {
-        int newBalance = moneyMap.get(sender) - amount;
+    public void processPayment(Player sender, Player receiver, int amount) {
+        // Retrieve the sender's balance, defaulting to 0 if not present.
+        Integer currentBalance = moneyMap.getOrDefault(sender, 0);
+        Integer recieverCurrentBalance = moneyMap.getOrDefault(receiver, 0);
+        int newBalance = currentBalance - amount;
+        int recieverNewBalance = recieverCurrentBalance + amount;
         if (newBalance >= 0) {
             setMoneyMap(newBalance, sender);
-            reciever.sendMessage(ChatColor.GREEN + "You recieved " + amount + " from " + sender.getName() + "!");
-            sender.sendMessage(ChatColor.GREEN + "You sent " + amount + " to " + reciever.getName() +"!");
+
+            receiver.sendMessage(ChatColor.GREEN + "You received " + amount + " from " + sender.getName() + "! You now have: " + recieverNewBalance);
+            sender.sendMessage(ChatColor.GREEN + "You sent " + amount + " to " + receiver.getName() + "!");
         } else {
-            sender.sendMessage(ChatColor.RED + "You do not have enough money! Your balance: " + getMoneyMap().get(sender));
+            sender.sendMessage(ChatColor.RED + "You do not have enough money! Your balance: " + currentBalance);
         }
     }
 }
