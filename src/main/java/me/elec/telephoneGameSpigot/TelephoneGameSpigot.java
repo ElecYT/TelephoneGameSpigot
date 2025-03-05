@@ -3,6 +3,7 @@ package me.elec.telephoneGameSpigot;
 import de.maxhenkel.voicechat.api.BukkitVoicechatService;
 import me.elec.telephoneGameSpigot.commands.BribeCommand;
 import me.elec.telephoneGameSpigot.commands.CallCommand;
+import me.elec.telephoneGameSpigot.commands.EndGameCommand;
 import me.elec.telephoneGameSpigot.commands.StartGameCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -20,6 +21,7 @@ public final class TelephoneGameSpigot extends JavaPlugin {
 
     private BribeManager bribeManager;
     private TeleportManager teleportManager;
+    public boolean gameStarted = false;
 
 
 
@@ -82,6 +84,7 @@ public final class TelephoneGameSpigot extends JavaPlugin {
         getCommand("call").setExecutor(new CallCommand(this, voiceChatManager));
         getCommand("bribe").setExecutor(new BribeCommand(this, bribeManager));
         getCommand("startgame").setExecutor(new StartGameCommand(bribeManager, this));
+        getCommand("endgame").setExecutor(new EndGameCommand(bribeManager, this));
 
         //Populate Location Map
         teleportManager.populateLocationMap();

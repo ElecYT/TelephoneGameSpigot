@@ -13,3 +13,6 @@ commands:
   startgame:
     description: Starts the telephone game.
     usage: startgame
+  endgame:
+    description: Ends the telephone game.
+    usage: endgame

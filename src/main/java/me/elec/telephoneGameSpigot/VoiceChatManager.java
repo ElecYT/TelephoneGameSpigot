@@ -76,6 +76,7 @@ public class VoiceChatManager implements VoicechatPlugin {
 
         String groupName = "Call-" + UUID.randomUUID().toString().substring(0, 6);
         Group group = voiceChatServerApi.createGroup(groupName, null);
+
         if (group == null) {
             plugin.getLogger().warning("Failed to create voice chat group.");
             return;

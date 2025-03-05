@@ -51,7 +51,7 @@ public class BribeCommand implements CommandExecutor {
         String target = args[1];
         Player targetPlayer = Bukkit.getPlayer(target);
 
-        if (targetPlayer == null || !targetPlayer.isOnline()) {
+        if (targetPlayer == null || !targetPlayer.isOnline() || targetPlayer == sender) {
             player.sendMessage(ChatColor.RED + "Invalid player: " + target);
             return true;
         } else {
